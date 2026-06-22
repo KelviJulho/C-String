@@ -1,0 +1,142 @@
+[_][_][_][_][_][_][_]
+
+
+#include "string.h"
+#include "stdlib.h"
+
+#ifndef SIMPLE_STRING_H
+#define SIMPLE_STRING_H
+
+typedef struct {
+    char * data;
+    unsigned long length;
+} String;
+
+//create a new empty string with defined length
+//this function considers the null terminator, so it is not necessary to include it in the length argument
+String * new_string_cap(unsigned long length) {
+    String * str = (String*)malloc(sizeof(String));
+
+    str->data = (char*)malloc(length + 1);
+    str->length = length;
+
+    return str;
+}
+String * new_string(char * data) {
+    unsigned long length = strlen(data);
+
+    String * str = new_string_cap(length);
+    memcpy(str->data, data, length + 1);
+
+    return str;
+}
+void string_deinit(String * self) {
+    free(self->data);
+    free(self);
+}
+unsigned long string_length(String * self) {
+    return self->length;
+}
+String * string_duplicate(String * self) {
+    String * str = new_string_cap(self->length);
+
+    memcpy(str->data, self->data, self->length + 1);
+
+    return str;
+}
+String * string_concate(String * a, String * b) {
+    String * str = new_string_cap(a->length + b->length);
+
+    memcpy(str->data, a->data, a->length);
+    memcpy(str->data + a->length, b->data, b->length + 1);
+
+    return str;
+}
+String * string_sub(String * self, unsigned int start, unsigned int end) {
+    if (start >= end || end >= self->length) {
+        return NULL;
+    }
+
+    unsigned long length = end - start;
+
+    String * str = new_string_cap(length);
+
+    memcpy(str->data, self->data + start, length);
+    ((char*)str->data)[length] = '\0';
+    
+    return str;
+}
+char string_at(String * self, unsigned int index) {
+    return ((char*)self->data)[index];
+}
+int string_equal(String * a, String * b) {
+    if (a->length != b->length) {return 0;}
+    return memcmp(a->data, b->data, a->length) == 0;
+}
+
+#endif
+
+
+//create a new empty string with length defined
+//it is not necessary to consider a null terminator in the `length` parameter
+Str * new_string_capacity(unsigned int length) {
+    //create new string ptr
+    Str * str = (Str*)malloc(sizeof(Str));
+
+    //set string length
+    str->length = length;
+    //allocate chars
+    //note: length + 1 for null terminator
+    str->data = (char*)malloc(length + 1);
+
+    return str;
+}
+
+//create a new initialized string
+Str * new_string(const char * value) {
+    //get value length
+    unsigned int length = strlen(value);
+
+    //create new string ptr
+    Str * str = new_string_capacity(length);
+    //set string value
+    memcpy(str->data, value, length + 1);
+
+    return str;
+}
+
+//create a new duplicated string
+Str * string_duplicate(Str * self) {
+    return new_string(self->data);
+}
+
+//create a new string as substring of another string
+Str * string_substring(Str * self, unsigned int start, unsigned int end) {
+    //check if range is valid
+    if (start >= end || end >= self->length) {
+        return NULL;
+    }
+    
+    //calculate byte count for substring
+    unsigned long length = end - start;
+    //create substring ptr
+    Str * str = new_string_cap(length);
+    //copy bytes for substring between start and end
+    memcpy(str->data, self->data + start, length);
+    ((char*)str->data)[length] = '\0';
+    
+    return str;
+}
+
+//create a new concatenated string
+Str * string_concate(Str * a, Str * b) {
+    //create concatenate string ptr
+    Str * str = new_string_cap(a->length + b->length);
+
+    memcpy(str->data, a->data, a->length);
+    memcpy(str->data + a->length, b->data, b->length + 1);
+
+    return str;
+}
+
+#endif

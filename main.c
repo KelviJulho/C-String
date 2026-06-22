@@ -1,23 +1,18 @@
 #include "stdio.h"
 
 #include "src/str.h"
+#include "src/strbuilder.h"
 
 int main(int argc, char const *argv[]){
-    
-    String * a = new_string("kelvi");
-    String * b = new_string("julho");
-    String * c = string_concate(a, b);
+    StrBuilder * s = new_str_builder(10, NULL);
 
-    String * d = string_sub(c, 0, 5);
+    str_builder_push(s, "kelvi ");
+    str_builder_push(s, "julho");
 
-    printf("%s %s", c->data, d->data);
+    Str * t = str_builder_to_str(s);
+    str_builder_deinit(s);
 
-    String * e = string_sub(d, 0, 1);
-
-    printf("%s", e->data);
-
-    string_deinit(a);
-    string_deinit(c);
+    printf("%s", t->data);
 
     return 0;
 }
